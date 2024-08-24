@@ -1,0 +1,65 @@
+---
+import { formatSize, listPools } from '@/lib/utils'
+import Availability from './Availability.astro'
+
+const pools = await listPools()
+console.log(pools.fast.datasets)
+---
+
+<table class="[&_td]:px-2 [&_td]:text-sm [&_th]:px-2">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Used</th>
+      <th>Available</th>
+      <th>Compression</th>
+      <th>Logical Used</th>
+      <th>Ratio</th>
+      <th>Copies</th>
+      <th>Dedup</th>
+    </tr>
+  </thead>
+  <tbody>
+    {
+      Object.entries(await pools).map(([pool, info]) => {
+        return (
+          <>
+            <tr>
+              <td>{info.name}</td>
+              <td class="text-right" colspan="2">
+                <Availability used={info.used} available={info.available} />
+              </td>
+              <td>{info.compression}</td>
+              <td class="text-right">{formatSize(info.logicalused)}</td>
+              <td class="text-right">{info.ratio}</td>
+              <td>{info.copies}</td>
+              <td>{info.dedup}</td>
+            </tr>
+            {Object.entries(info.datasets).map(([dataset, datasetInfo]) => {
+              return (
+                <tr>
+                  <td>
+                    <span class="ml-2">{datasetInfo.name}</span>
+                  </td>
+                  <td class="text-right" colspan="2">
+                    <Availability
+                      used={datasetInfo.used}
+                      available={datasetInfo.available}
+                    />
+                  </td>
+                  <td>{datasetInfo.compression}</td>
+                  <td class="text-right">
+                    {formatSize(datasetInfo.logicalused)}
+                  </td>
+                  <td class="text-right">{datasetInfo.ratio}</td>
+                  <td>{datasetInfo.copies}</td>
+                  <td>{datasetInfo.dedup}</td>
+                </tr>
+              )
+            })}
+          </>
+        )
+      })
+    }
+  </tbody>
+</table>

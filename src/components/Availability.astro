@@ -1,0 +1,27 @@
+---
+import { formatSize } from '@/lib/utils'
+
+interface Props {
+  used: number
+  available: number
+}
+
+const { used, available } = Astro.props
+---
+
+<div class="relative rounded-sm border border-slate-400 text-sm">
+  <div class="flex justify-between gap-1 rounded-sm px-1">
+    <span>
+      {formatSize(used)}
+    </span>
+    <span> / </span>
+    <span>
+      {formatSize(available)}
+    </span>
+  </div>
+  <div
+    class="absolute bottom-0 left-0 h-[10%] bg-slate-500"
+    style={`width: ${((used / available) * 100).toFixed(2)}%`}
+  >
+  </div>
+</div>
