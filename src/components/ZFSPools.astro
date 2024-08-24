@@ -1,12 +1,11 @@
 ---
-import { formatSize, listPools } from '@/lib/utils'
+import { formatSize, listPools, listOptions } from '@/lib/utils'
 import Availability from './Availability.astro'
 
 const pools = await listPools()
-console.log(pools.fast.datasets)
 ---
 
-<table class="[&_td]:px-2 [&_td]:text-sm [&_th]:px-2">
+<table class="[&_td]:px-2 [&_td]:text-sm [&_th]:px-2 [&_th]:text-sm">
   <thead>
     <tr>
       <th>Name</th>
@@ -17,6 +16,10 @@ console.log(pools.fast.datasets)
       <th>Ratio</th>
       <th>Copies</th>
       <th>Dedup</th>
+      <th>Prefetch</th>
+      <th>Primary Cache</th>
+      <th>Secondary Cache</th>
+      <th>Quota</th>
     </tr>
   </thead>
   <tbody>
@@ -34,6 +37,12 @@ console.log(pools.fast.datasets)
               <td class="text-right">{info.ratio}</td>
               <td>{info.copies}</td>
               <td>{info.dedup}</td>
+              <td>{info.prefetch}</td>
+              <td>{info.primarycache}</td>
+              <td>{info.secondarycache}</td>
+              <td class="text-right">
+                {info.quota ? formatSize(info.quota) : '--'}
+              </td>
             </tr>
             {Object.entries(info.datasets).map(([dataset, datasetInfo]) => {
               return (
@@ -54,6 +63,12 @@ console.log(pools.fast.datasets)
                   <td class="text-right">{datasetInfo.ratio}</td>
                   <td>{datasetInfo.copies}</td>
                   <td>{datasetInfo.dedup}</td>
+                  <td>{datasetInfo.prefetch}</td>
+                  <td>{datasetInfo.primarycache}</td>
+                  <td>{datasetInfo.secondarycache}</td>
+                  <td class="text-right">
+                    {datasetInfo.quota ? formatSize(datasetInfo.quota) : '--'}
+                  </td>
                 </tr>
               )
             })}
