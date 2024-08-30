@@ -36,6 +36,7 @@ type SetInfo = CommonInfo & {
   primarycache: string
   secondarycache: string
   quota: number | null
+  type: 'filesystem' | 'snapshot'
 }
 type Snapshot = CommonInfo
 type Dataset = SetInfo & {
@@ -46,7 +47,7 @@ type PoolInfo = SetInfo & {
 }
 export async function listPools() {
   const [output] = await runSSH(
-    'zfs list -p -H -t all -o name,used,logicalused,avail,compression,ratio,copies,dedup,prefetch,primarycache,secondarycache,snapshot_count,snapshots_changed,quota'
+    'zfs list -p -H -t all -o name,used,logicalused,avail,compression,ratio,copies,dedup,prefetch,primarycache,secondarycache,snapshot_count,snapshots_changed,quota,type'
   )
   return output.split('\n').reduce(
     (acc, line) => {
@@ -63,8 +64,9 @@ export async function listPools() {
         primarycache,
         secondarycache,
         quota,
+        type,
       ] = line.split('\t')
-      const [pool, datasetSnapshot] = name.split('/')
+      const [pool, datasetSnapshot] = name.split(/\/(.*)/s, 2)
       const [dataset, snapshot] = (datasetSnapshot ?? '').split('@')
       if (snapshot) {
         acc[pool].datasets.at(-1)?.snapshots.push({
@@ -85,6 +87,7 @@ export async function listPools() {
           primarycache,
           secondarycache,
           quota: quota ? +quota : null,
+          type: type as 'filesystem' | 'snapshot',
         }
         if (dataset) {
           acc[pool].datasets.push({
