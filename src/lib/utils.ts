@@ -17,7 +17,8 @@ export function formatSize(size: number) {
   if (size < 1024) return `${size} B`
   if (size < 1024 ** 2) return `${size / 1024} KB` // zfs rounds to kb?
   if (size < 1024 ** 3) return `${(size / 1024 ** 2).toFixed(2)} MB`
-  return `${(size / 1024 ** 3).toFixed(2)} GB`
+  if (size < 1024 ** 4) return `${(size / 1024 ** 3).toFixed(2)} GB`
+  return `${(size / 1024 ** 4).toFixed(2)} TB`
 }
 
 type CommonInfo = {
