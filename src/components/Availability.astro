@@ -7,6 +7,8 @@ interface Props {
 }
 
 const { used, available } = Astro.props
+const total = used + available
+const percent = total > 0 ? ((used / total) * 100).toFixed(2) : '0.00'
 ---
 
 <div class="relative rounded-sm border border-slate-400 text-sm">
@@ -21,7 +23,7 @@ const { used, available } = Astro.props
   </div>
   <div
     class="absolute bottom-0 left-0 h-[10%] bg-slate-500"
-    style={`width: ${((used / available) * 100).toFixed(2)}%`}
+    style={`width: ${percent}%`}
   >
   </div>
 </div>
